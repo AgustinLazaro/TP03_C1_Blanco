@@ -1,2 +1,25 @@
 fileFormatVersion: 2
 guid: 39084709f2ef9ec438aed4a8cef7762c
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - panelPause: {fileID: 8742413361982807122, guid: d0f6c3644027386478fa81410bef1eac, type: 3}
+  - panelCredits: {fileID: 8275941393532005127, guid: d520a1bf9b6e4be4790487d89c4fbcf5, type: 3}
+  - panelOptions: {fileID: 8733435176171105725, guid: 8788df6cf9b4ca641bba357e323a3d7d, type: 3}
+  - buttonPlay: {instanceID: 0}
+  - buttonOptions: {instanceID: 0}
+  - buttonBackToMenu: {instanceID: 0}
+  - buttonCredits: {instanceID: 0}
+  - buttonExit: {instanceID: 0}
+  - buttonCreditsBack: {instanceID: 0}
+  - colorDropdown: {instanceID: 0}
+  - heightSlider: {instanceID: 0}
+  - speedSlider: {instanceID: 0}
+  - player1: {instanceID: 0}
+  - player2: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

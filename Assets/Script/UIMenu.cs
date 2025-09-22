@@ -1,125 +1,156 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro; // Necesario si usas TextMeshPro para el Dropdown.
 
-public class UIMainMenu : MonoBehaviour
+// Este script controla todo el menú de pausa y las opciones.
+public class UIMenu : MonoBehaviour
 {
-    [Header("Referencias")]
-    [SerializeField] private GameObject panelPause;      // Panel de pausa
-    [SerializeField] private GameObject panelCredits;    // Panel de créditos
-    [SerializeField] private GameObject panelOptions;    // Panel de opciones
+    [Header("Paneles")]
+    [SerializeField] private GameObject panelPause;
+    [SerializeField] private GameObject panelOptions;
+    [SerializeField] private GameObject panelCredits; // Panel para los créditos.
 
     [Header("Botones")]
-    [SerializeField] private Button buttonPlay;          // Botón para reanudar el juego
-    [SerializeField] private Button buttonOptions;       // Botón para abrir opciones
-    [SerializeField] private Button buttonBackToMenu;    // Botón para volver de opciones a pausa
-    [SerializeField] private Button buttonCredits;       // Botón para abrir créditos
-    [SerializeField] private Button buttonExit;          // Botón para salir al menú principal
-    [SerializeField] private Button buttonCreditsBack;   // Botón para volver de créditos
+    [SerializeField] private Button buttonResume; // Botón para reanudar.
+    [SerializeField] private Button buttonOptions; // Botón para ir a opciones.
+    [SerializeField] private Button buttonBack; // Botón para volver de opciones al menú de pausa.
+    [SerializeField] private Button buttonCredits;// Botón para ver créditos.
+    [SerializeField] private Button buttonExit; // Botón para salir al menú principal.
 
-    [Header("Opciones de Juego")]
-    [SerializeField] private Dropdown colorDropdown;     // Dropdown para seleccionar color del paddle
-    [SerializeField] private Slider heightSlider;        // Slider para cambiar el tamaño del paddle
-    [SerializeField] private Slider speedSlider;         // Slider para cambiar la velocidad del paddle
+    [Header("Controles de Opciones")]
+    [SerializeField] private TMP_Dropdown colorDropdown; // Dropdown para el color.
+    [SerializeField] private Slider heightSlider; // Slider para la altura.
+    [SerializeField] private Slider speedSlider; // Slider para la velocidad.
 
-    [Header("Referencias a Jugadores")]
-    [SerializeField] private PaddleMovement player1;     // Referencia al paddle del jugador 1
-    [SerializeField] private PaddleMovement player2;     // Referencia al paddle del jugador 2
+    [Header("Referencias a los Jugadores")]
+    [SerializeField] private PaddleMovement player1;
+    [SerializeField] private PaddleMovement player2;
 
-    private bool isPaused = true; // Indica si el juego está en pausa
+    private bool isPaused = false; // Para saber si el juego está en pausa.
 
-    // Asigna los listeners a los botones y sliders/dropdown al iniciar
+    // Awake es para configurar los listeners de los botones y controles.
     private void Awake()
     {
-        if (buttonPlay != null)
-            buttonPlay.onClick.AddListener(() => panelPause.SetActive(false)); // Reanuda el juego
-        if (buttonOptions != null)
-            buttonOptions.onClick.AddListener(OnOptionsClicked); // Abre opciones
-        if (buttonCredits != null)
-            buttonCredits.onClick.AddListener(() => panelCredits.SetActive(true)); // Abre créditos
-        if (buttonExit != null)
-            buttonExit.onClick.AddListener(OnExitClicked); // Sale al menú principal
-        if (buttonCreditsBack != null)
-            buttonCreditsBack.onClick.AddListener(() => panelCredits.SetActive(false)); // Cierra créditos
-        if (buttonBackToMenu != null)
-            buttonBackToMenu.onClick.AddListener(() =>
-            {
-                panelOptions.SetActive(false); // Cierra opciones
-                panelPause.SetActive(true);    // Abre pausa
-            });
+        // Comprobación de seguridad para evitar errores.
+        if (panelPause == null || panelOptions == null || panelCredits == null || buttonResume == null)
+        {
+            Debug.LogError("¡FALTAN REFERENCIAS EN UIMenu! Asegúrate de asignar todos los paneles y botones en el Inspector.");
+            // Desactivamos el script para evitar más errores.
+            this.enabled = false;
+            return;
+        }
 
-        // Listeners para sliders y dropdown
-        if (speedSlider != null) speedSlider.onValueChanged.AddListener(OnSpeedChanged);   // Cambia velocidad
-        if (heightSlider != null) heightSlider.onValueChanged.AddListener(OnHeightChanged); // Cambia tamaño
-        if (colorDropdown != null) colorDropdown.onValueChanged.AddListener(OnColorChanged); // Cambia color
+        // Conectamos cada botón a su función.
+        buttonResume.onClick.AddListener(TogglePause);
+        buttonOptions.onClick.AddListener(ShowOptionsPanel);
+        buttonBack.onClick.AddListener(ShowPausePanel);
+        buttonCredits.onClick.AddListener(ShowCreditsPanel);
+        buttonExit.onClick.AddListener(ExitToMainMenu);
+
+        // Conectamos los controles de opciones.
+        colorDropdown.onValueChanged.AddListener(ChangePaddlesColor);
+        heightSlider.onValueChanged.AddListener(ChangePaddlesHeight);
+        speedSlider.onValueChanged.AddListener(ChangePaddlesSpeed);
     }
 
-    // Permite pausar y reanudar el juego con la tecla Escape
+    // Start se usa para asegurar el estado inicial.
+    private void Start()
+    {
+        // Al empezar, nos aseguramos de que el juego no esté pausado.
+        panelPause.SetActive(false);
+        panelOptions.SetActive(false);
+        panelCredits.SetActive(false);
+        Time.timeScale = 1f;
+        isPaused = false;
+    }
+
+    // Update para leer la tecla Escape.
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            isPaused = !isPaused;
-            panelPause.SetActive(isPaused);
-            Time.timeScale = isPaused ? 0 : 1;
+            TogglePause();
         }
     }
 
-    // Elimina todos los listeners al destruir el objeto
-    private void OnDestroy()
+    // Pausa o reanuda el juego.
+    public void TogglePause()
     {
-        if (buttonPlay != null) buttonPlay.onClick.RemoveAllListeners();
-        if (buttonOptions != null) buttonOptions.onClick.RemoveAllListeners();
-        if (buttonCredits != null) buttonCredits.onClick.RemoveAllListeners();
-        if (buttonExit != null) buttonExit.onClick.RemoveAllListeners();
-        if (buttonCreditsBack != null) buttonCreditsBack.onClick.RemoveAllListeners();
-        if (buttonBackToMenu != null) buttonBackToMenu.onClick.RemoveAllListeners();
+        isPaused = !isPaused; // Invertimos el estado de pausa.
 
-        if (speedSlider != null) speedSlider.onValueChanged.RemoveAllListeners();
-        if (heightSlider != null) heightSlider.onValueChanged.RemoveAllListeners();
-        if (colorDropdown != null) colorDropdown.onValueChanged.RemoveAllListeners();
+        if (isPaused)
+        {
+            // Si pausamos, mostramos el menú y congelamos el tiempo.
+            ShowPausePanel();
+            Time.timeScale = 0f;
+        }
+        else
+        {
+            // Si reanudamos, ocultamos todo y reanudamos el tiempo.
+            panelPause.SetActive(false);
+            panelOptions.SetActive(false);
+            panelCredits.SetActive(false);
+            Time.timeScale = 1f;
+        }
     }
 
-    // Muestra el panel de opciones y oculta el de pausa
-    private void OnOptionsClicked()
+    // Muestra el panel de pausa y oculta los demás.
+    private void ShowPausePanel()
     {
-        panelOptions.SetActive(true);
+        panelPause.SetActive(true);
+        panelOptions.SetActive(false);
+        panelCredits.SetActive(false);
+    }
+
+    // Muestra el panel de opciones y oculta el de pausa.
+    private void ShowOptionsPanel()
+    {
         panelPause.SetActive(false);
+        panelOptions.SetActive(true);
     }
 
-    // Cambia a la escena del menú principal
-    private void OnExitClicked()
+    // Muestra el panel de créditos.
+    private void ShowCreditsPanel()
     {
-        SceneManager.LoadScene("MainMenu");
+        panelPause.SetActive(false);
+        panelCredits.SetActive(true);
     }
 
-    // Cambia la velocidad de ambos paddles según el valor del slider
-    private void OnSpeedChanged(float value)
+    // Carga la escena del menú principal.
+    private void ExitToMainMenu()
     {
-        if (player1 != null) player1.SetSpeed(value);
-        if (player2 != null) player2.SetSpeed(value);
+        Time.timeScale = 1f; // ¡Importante! Restaurar el tiempo antes de cambiar de escena.
+        SceneManager.LoadScene("MainMenu"); // Asegúrate de que tu escena se llame "MainMenu".
     }
 
-    // Cambia el tamaño (largo) de ambos paddles según el valor del slider
-    private void OnHeightChanged(float value)
-    {
-        if (player1 != null) player1.SetHeight(value);
-        if (player2 != null) player2.SetHeight(value);
-    }
+    // --- Funciones para los Controles de Opciones ---
 
-    // Cambia el color de ambos paddles según la opción seleccionada en el dropdown
-    private void OnColorChanged(int index)
+    private void ChangePaddlesColor(int colorIndex)
     {
         Color newColor = Color.white;
-        switch (index)
+        switch (colorIndex)
         {
             case 0: newColor = Color.white; break;
             case 1: newColor = Color.red; break;
-            case 2: newColor = Color.blue; break;
-            case 3: newColor = Color.green; break;
+            case 2: newColor = Color.green; break;
+            case 3: newColor = Color.blue; break;
         }
-        if (player1 != null) player1.SetColor(newColor);
-        if (player2 != null) player2.SetColor(newColor);
+        player1.SetColor(newColor);
+        player2.SetColor(newColor);
+    }
+
+    private void ChangePaddlesHeight(float newHeight)
+    {
+        player1.SetHeight(newHeight);
+        player2.SetHeight(newHeight);
+    }
+
+    private void ChangePaddlesSpeed(float newSpeed)
+    {
+        player1.SetSpeed(newSpeed);
+        player2.SetSpeed(newSpeed);
     }
 }
 

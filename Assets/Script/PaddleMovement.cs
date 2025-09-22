@@ -1,92 +1,103 @@
-using System;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
+// Controla todo lo que hace el paddle.
 public class PaddleMovement : MonoBehaviour
 {
-    [Header("PaddleMovement")]
-    [SerializeField] private float movementSpeed = 10f; // Velocidad de movimiento vertical
-    [SerializeField] private KeyCode moveUpKey = KeyCode.W; // Tecla para mover arriba
-    [SerializeField] private KeyCode moveDownKey = KeyCode.S; // Tecla para mover abajo
+    [Header("Fuerza de Movimiento")]
+    [SerializeField] private float movementForce = 50f; // La FUERZA que aplicamos.
+    [SerializeField] private float horizontalForce = 40f;
 
-    [Header("Rotate")]
-    [SerializeField] private float rotationSpeed = 10.0f; // Velocidad de rotación
-    [SerializeField] private KeyCode rotateToRight = KeyCode.D; // Tecla rotar derecha
-    [SerializeField] private KeyCode rotateToLeft = KeyCode.A; // Tecla rotar izquierda
+    [Header("Velocidad Máxima")]
+    [SerializeField] private float maxVerticalSpeed = 10f; // Límite para que no acelere infinitamente.
+    [SerializeField] private float maxHorizontalSpeed = 8f;
 
-    [Header("Colors")]
-    [SerializeField] private KeyCode paddleColor = KeyCode.R; // Tecla para cambiar color
+    [Header("Teclas de Control")]
+    [SerializeField] private KeyCode moveUpKey = KeyCode.W;
+    [SerializeField] private KeyCode moveDownKey = KeyCode.S;
+    [SerializeField] private KeyCode moveRightKey = KeyCode.D;
+    [SerializeField] private KeyCode moveLeftKey = KeyCode.A;
 
-    private SpriteRenderer spriteRenderer; // Cambia el color del paddle
-    private Rigidbody2D _rigidbody2D;      // Mueve el paddle   
+    // --- Referencias ---
+    private Rigidbody2D rb;
+    private SpriteRenderer spriteRenderer;
+    private Color originalColor;
 
-    private void Start()
+    private void Awake()
     {
+        rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        _rigidbody2D = GetComponent<Rigidbody2D>();
-    }
-
-    private void Update()
-    {
-        Rotate();      // Rotación con teclas
-        ChangeColor(); // Cambia color con tecla
+        originalColor = spriteRenderer.color;
     }
 
     private void FixedUpdate()
     {
-        Move(); // Movimiento vertical
+        HandleMovementWithForce();
     }
 
-    // Movimiento vertical según teclas y velocidad
-    private void Move()
+    // Movimiento basado en FUERZA, que respeta las colisiones.
+    private void HandleMovementWithForce()
     {
-        Vector2 pos = _rigidbody2D.position;
-        if (Input.GetKey(moveUpKey))
-            pos.y += movementSpeed * Time.fixedDeltaTime;
-        if (Input.GetKey(moveDownKey))
-            pos.y -= movementSpeed * Time.fixedDeltaTime;
-        _rigidbody2D.MovePosition(pos);
+        // --- Captura de Input ---
+        float verticalInput = 0f;
+        if (Input.GetKey(moveUpKey)) verticalInput = 1f;
+        else if (Input.GetKey(moveDownKey)) verticalInput = -1f;
+
+        float horizontalInput = 0f;
+        if (Input.GetKey(moveRightKey)) horizontalInput = 1f;
+        else if (Input.GetKey(moveLeftKey)) horizontalInput = -1f;
+
+        // --- Aplicar Fuerza ---
+        // Solo aplicamos fuerza si el jugador está presionando una tecla.
+        if (verticalInput != 0)
+        {
+            rb.AddForce(Vector2.up * verticalInput * movementForce);
+        }
+        if (horizontalInput != 0)
+        {
+            rb.AddForce(Vector2.right * horizontalInput * horizontalForce);
+        }
+
+        // --- Limitar la Velocidad ---
+        // Para evitar que el paddle acelere sin control, le ponemos un límite.
+        float clampedY = Mathf.Clamp(rb.velocity.y, -maxVerticalSpeed, maxVerticalSpeed);
+        float clampedX = Mathf.Clamp(rb.velocity.x, -maxHorizontalSpeed, maxHorizontalSpeed);
+        rb.velocity = new Vector2(clampedX, clampedY);
     }
 
-    // Rotación según teclas
-    private void Rotate()
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        float rotation = 0f;
-        if (Input.GetKey(rotateToRight))
-            rotation += rotationSpeed;
-        if (Input.GetKey(rotateToLeft))
-            rotation -= rotationSpeed;
-        if (rotation != 0f)
-            transform.Rotate(0, 0, rotation);
-    }
-
-    // Cambia el color a uno aleatorio al soltar la tecla
-    private void ChangeColor()
-    {
-        if (Input.GetKeyUp(paddleColor))
+        if (collision.gameObject.CompareTag("Ball"))
+        {
             spriteRenderer.color = new Color(Random.value, Random.value, Random.value);
+        }
+        else if (collision.gameObject.CompareTag("Wall"))
+        {
+            spriteRenderer.color = Color.black;
+        }
     }
 
-    // Cambia el color desde UI
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Wall"))
+        {
+            spriteRenderer.color = originalColor;
+        }
+    }
+
+    // --- Funciones Públicas ---
     public void SetColor(Color newColor)
     {
-        if (spriteRenderer == null)
-            spriteRenderer = GetComponent<SpriteRenderer>();
         spriteRenderer.color = newColor;
+        originalColor = newColor;
     }
-
-    // Cambia el largo del paddle desde UI
-    public void SetHeight(float value)
+    public void SetHeight(float newHeight)
     {
-        var t = transform.localScale;
-        t.y = value;
-        transform.localScale = t;
+        transform.localScale = new Vector3(transform.localScale.x, newHeight, transform.localScale.z);
     }
-
-    // Cambia la velocidad desde UI
     public void SetSpeed(float newSpeed)
     {
-        movementSpeed = newSpeed;
+        // Ahora el slider controla la fuerza, no la velocidad directa.
+        movementForce = newSpeed;
     }
 }
 
