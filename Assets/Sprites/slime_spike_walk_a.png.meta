@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 1c8f9377c36de8e449654c23ca74c3bc
+guid: 97585c83865a1034b858760671413dda
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -156,7 +156,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      slime_spike_walk_a_0: 7729088918001344249
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// [CreateAssetMenu] nos permite crear instancias de este objeto desde el menú de Unity.
+// [CreateAssetMenu]  permite crear instancias de este objeto desde el menú de Unity.
 [CreateAssetMenu(fileName = "GameSettings", menuName = "Pong/Game Settings")]
 public class GameSettings : ScriptableObject
 {

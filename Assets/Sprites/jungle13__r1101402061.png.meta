@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 177713e44240ec94d9e106610e35201e
+guid: fa4aef2100dba8d44b1d64e1c9acd3df
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -156,7 +156,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      jungle13__r1101402061_0: -1297088442935297819
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

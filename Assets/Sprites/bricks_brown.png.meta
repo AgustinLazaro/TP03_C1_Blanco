@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 7f0268649b4f8f84a9ef5f96a84d510b
+guid: ab6ac9c8edc224d48be7bb902996993c
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -156,7 +156,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      bricks_brown_0: -3280133452547674387
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

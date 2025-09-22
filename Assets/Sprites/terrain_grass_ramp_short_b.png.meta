@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: d592aec26dc630d4183fd1f77373ce85
+guid: 3df7489d36796c247846b0beb2005505
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -156,7 +156,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      terrain_grass_ramp_short_b_0: -6924602100647236821
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
