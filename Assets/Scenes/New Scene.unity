@@ -2216,8 +2216,8 @@ Transform:
   m_GameObject: {fileID: 1902664305}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.4733, y: 0.76, z: 0}
-  m_LocalScale: {x: 12.567629, y: 11.670042, z: 1}
+  m_LocalPosition: {x: 0.8165, y: -0.4409, z: 0}
+  m_LocalScale: {x: 14.015863, y: 13.8744545, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -2810,12 +2810,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1010925558008556912, guid: 943f1e2de75080748bf1668b3992e911, type: 3}
       propertyPath: m_text
-      value: 'Develop by Agustin Lazaro Blanco Romero
-
-        asset by craftpix.net
-        and tch.io
-
-'
+      value: CREDITS
       objectReference: {fileID: 0}
     - target: {fileID: 1584124479632689619, guid: 943f1e2de75080748bf1668b3992e911, type: 3}
       propertyPath: m_IsActive
@@ -2868,6 +2863,19 @@ PrefabInstance:
     - target: {fileID: 3240786046725173601, guid: 943f1e2de75080748bf1668b3992e911, type: 3}
       propertyPath: m_Name
       value: UiMenu
+      objectReference: {fileID: 0}
+    - target: {fileID: 4829891668348788137, guid: 943f1e2de75080748bf1668b3992e911, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6132120413044456900, guid: 943f1e2de75080748bf1668b3992e911, type: 3}
+      propertyPath: m_text
+      value: 'Develop by Agustin Lazaro Blanco Romero
+
+        asset by craftpix.net
+        and tch.io
+
+'
       objectReference: {fileID: 0}
     - target: {fileID: 7538216025777831951, guid: 943f1e2de75080748bf1668b3992e911, type: 3}
       propertyPath: m_Pivot.x
@@ -2948,6 +2956,10 @@ PrefabInstance:
     - target: {fileID: 7538216025777831951, guid: 943f1e2de75080748bf1668b3992e911, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8217736288756490431, guid: 943f1e2de75080748bf1668b3992e911, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

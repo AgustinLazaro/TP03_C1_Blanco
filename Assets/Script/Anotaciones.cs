@@ -5,16 +5,16 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using TMPro;
 
-/*
+/* 
+ * todo este documento me sirve a modo de guia y anotaciones para entender el proyecto
  * =================================================================================================
  * ANOTACIONES Y GUÍA DEL PROYECTO - PONG CON MEJORAS
  * =================================================================================================
  * 
  * Este documento sirve como una guía central para entender la estructura y el funcionamiento
  * de los diferentes scripts que componen este proyecto de Pong.
- * 
- * 
- * -------------------------------------------------------------------------------------------------
+ *
+ *
  * ESTRUCTURA GENERAL DE SCRIPTS
  * -------------------------------------------------------------------------------------------------
  * 
@@ -223,5 +223,55 @@ public class Anotaciones : MonoBehaviour
     // 3. Cuando ya no lo necesitamos, en lugar de destruirlo, lo desactivamos y lo devolvemos a la piscina.
     // Es como tener una caja de piezas de Lego reutilizables. ¡Mucho más eficiente!
     // Lo usamos en 'ObstacleSpawnSystem' y 'PowerUpSpawnSystem'.
+
+    // --- Patrón Singleton ---
+
+    // El Singleton es un patrón de diseño que garantiza que solo exista UNA instancia de una clase en todo el juego.
+    // Es perfecto para clases "manager" como GameManager, que necesitan ser accesibles desde cualquier otro script
+    // sin necesidad de buscarlo o pasarlo como referencia.
+    //
+    // public static GameManager instance;
+    //
+    // void Awake() {
+    //   if (instance == null) {
+    //     instance = this;
+    //   } else {
+    //     Destroy(gameObject);
+    //   }
+    // }
+    // Este código en el Awake() asegura que solo haya un GameManager. Si se intenta crear otro, se destruye.
+
+    // --- Eventos de UI y Listeners ---
+
+    // En Unity, la UI (Interfaz de Usuario) funciona con eventos. Por ejemplo, un botón tiene un evento `onClick`.
+    // Podemos "escuchar" (listen) estos eventos para ejecutar una función cuando ocurran.
+    //
+    // button.onClick.AddListener(MiFuncion);
+    //
+    // Esto le dice al botón: "Cuando alguien haga clic en ti, llama a MiFuncion".
+    // Lo usamos en UIMenu.cs para conectar los botones (Resume, Options, etc.) y los controles (sliders, dropdowns)
+    // a sus respectivas funciones en el código. Es una forma limpia y desacoplada de manejar la interacción del usuario.
+
+    // --- Gestión de Escenas (Scene Management) ---
+
+    // Unity permite dividir el juego en diferentes "escenas" (por ejemplo, Menú Principal, Nivel 1, Game Over).
+    // Para cambiar de una escena a otra, usamos el SceneManager.
+    //
+    // using UnityEngine.SceneManagement; // ¡No olvides importar la librería!
+    //
+    // SceneManager.LoadScene("NombreDeLaEscena");
+    //
+    // Esta línea carga la escena que le indiquemos por su nombre. En UIMenu.cs, lo usamos para volver al menú principal.
+    // Es importante recordar que las escenas deben estar añadidas en las Build Settings del proyecto para que funcione.
+
+    // --- Time.timeScale ---
+
+    // Es una propiedad estática que controla la velocidad a la que pasa el tiempo en el juego.
+    // - `Time.timeScale = 1f;`: El tiempo transcurre a velocidad normal.
+    // - `Time.timeScale = 0f;`: El tiempo se detiene por completo. Esto congela todas las animaciones y físicas.
+    // - `Time.timeScale = 0.5f;`: El juego iría a cámara lenta (mitad de velocidad).
+    //
+    // Es la herramienta que usamos en `UIMenu.cs` para implementar la pausa. Al poner `timeScale` a 0, el juego se congela,
+    // y al volver a ponerlo a 1, todo continúa como si nada.
 
 }
